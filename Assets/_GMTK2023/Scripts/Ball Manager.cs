@@ -30,6 +30,9 @@ public class BallManager : MonoBehaviour
     [SerializeField]
     Ball ballTemplate;
 
+    [SerializeField]
+    int minimumInRow = 3;
+
     Vector3 spawnPoint = Vector3.zero;
 
 
@@ -43,6 +46,8 @@ public class BallManager : MonoBehaviour
     float expectedOffset;
     Vector3 expectedPosition;
     int collisionSpot = -1;
+    bool retractHead = false;
+    int retractIndex = -1;
 
     // Start is called before the first frame update
     void Start()
@@ -59,7 +64,7 @@ public class BallManager : MonoBehaviour
 
         HandleInput();
 
-        if(collisionSpot > 0)
+        if(collisionSpot >= 0)
         {
             InsertBall();
         }
@@ -72,46 +77,49 @@ public class BallManager : MonoBehaviour
         if(trackedBall != null && collisionSpot < 0)
         {
             collisionSpot = CheckCollision();
-            if(collisionSpot > 0)
+            if(collisionSpot >= 0)
             {
                 expectedOffset = ExpectedOffset(collisionSpot);
                 expectedPosition = spline.EvaluatePosition(expectedOffset);
             }
         }
 
-        HighlightSelectedBalls();
+        //HighlightSelectedBalls();
 
     }
 
     private void InsertBall()
     {
 
-        float delta = Time.deltaTime * actualSpeed / spline.CalculateLength();
+        float delta = Time.deltaTime * speed / spline.CalculateLength();
 
-        
-        
-        trackedBall.Velocity = (expectedPosition - trackedBall.transform.position) * actualSpeed * 1.2f;
+
+
+        trackedBall.Velocity = (expectedPosition - trackedBall.transform.position) * speed;
 
         for(int i = balls.Count - 1; i >= collisionSpot; i--)
         {
 
             Vector3 newPosition = spline.EvaluatePosition(ballOffsets[i] - delta);
 
-            if((newPosition - balls[i - 1].transform.position).magnitude >= 2 * ballRadius)
+            if(i == balls.Count - 1 || (newPosition - balls[i + 1].transform.position).magnitude >= 2 * ballRadius)
             {
-                balls[i].transform.position = newPosition;
+                balls[i].UpdateParameters(newPosition, newPosition - balls[i].transform.position, speed / spline.CalculateLength());
                 ballOffsets[i] -= delta;
             }
         }
         if(collisionSpot == 0 || collisionSpot == balls.Count || (balls[collisionSpot].transform.position - balls[collisionSpot - 1].transform.position).magnitude > 4 * ballRadius)
         {
-            
+
             balls.Insert(collisionSpot, trackedBall);
             ballOffsets.Insert(collisionSpot, expectedOffset);
-            
+
+            ClearReapeating(collisionSpot);
+
             collisionSpot = -1;
             trackedBall.State = BallState.InSnake;
             trackedBall = null;
+
         }
     }
 
@@ -142,7 +150,7 @@ public class BallManager : MonoBehaviour
                 }
                 else
                 {
-                    return i+1;
+                    return i + 1;
                 }
             }
         }
@@ -152,19 +160,21 @@ public class BallManager : MonoBehaviour
     private void MoveBalls()
     {
         float delta = Time.deltaTime * actualSpeed / spline.CalculateLength();
-        bool reversed = delta < 0;
+        bool reversed = delta < 0 || retractHead;
 
         int start = reversed ? balls.Count - 1 : 0;
         int end = reversed ? -1 : balls.Count;
-        for(int i = start; i != end; i+= reversed ? -1 : 1)
+        start = retractHead ? retractIndex - 1 : start;
+
+        for(int i = start; i != end; i += reversed ? -1 : 1)
         {
             Vector3 newPosition = spline.EvaluatePosition(ballOffsets[i] + delta);
 
-            if(    (!reversed  && i == 0)
-                || ( reversed && i == balls.Count - 1)
+            if((!reversed && i == 0)
+                || (reversed && i == balls.Count - 1)
                 || (newPosition - balls[i - (reversed ? -1 : 1)].transform.position).magnitude >= 2 * ballRadius)
             {
-                balls[i].transform.position = newPosition;
+                balls[i].UpdateParameters(newPosition, newPosition - balls[i].transform.position, actualSpeed / spline.CalculateLength());
                 ballOffsets[i] += delta;
                 ballOffsets[i] = Mathf.Clamp(ballOffsets[i], 0, 1);
             }
@@ -175,8 +185,8 @@ public class BallManager : MonoBehaviour
         if(balls.Count == 0 || ((balls.Last().transform.position - spawnPoint).magnitude > ballRadius && balls.Count < numOfBalls))
         {
             Ball go = Instantiate(ballTemplate, this.transform);
-            go.transform.position = spawnPoint;
-            go.GetComponent<MeshRenderer>().material.color = colors[Random.Range(0, colors.Count)];
+            go.UpdateParameters(spawnPoint, spline.EvaluateTangent(0), actualSpeed / spline.CalculateLength());
+            go.Color = colors[Random.Range(0, colors.Count)];
             balls.Add(go);
             ballOffsets.Add(0);
         }
@@ -189,7 +199,7 @@ public class BallManager : MonoBehaviour
             for(int i = 0; i < balls.Count; i++)
             {
 
-                Color col = balls[i].GetComponent<MeshRenderer>().material.color;
+                Color col = balls[i].Color;
                 float H, S, V;
                 Color.RGBToHSV(col, out H, out S, out V);
 
@@ -199,7 +209,7 @@ public class BallManager : MonoBehaviour
                     S = 1f;
                 }
 
-                balls[i].GetComponent<MeshRenderer>().material.color = Color.HSVToRGB(H, S, V);
+                balls[i].Color = Color.HSVToRGB(H, S, V);
 
             }
         }
@@ -220,20 +230,50 @@ public class BallManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.LeftArrow))
         {
             selection++;
-            selection = Mathf.Min(selection, balls.Count - 2);
+            selection = Mathf.Min(selection, balls.Count - 1);
         }
         else if(Input.GetKeyDown(KeyCode.RightArrow))
         {
             selection--;
-            selection = Mathf.Max(selection, 1);
+            selection = Mathf.Max(selection, 0);
         }
 
         if(Input.GetKeyDown(KeyCode.Space) && balls.Count > 2)
         {
-            Color temp = balls[selection].GetComponent<MeshRenderer>().material.color;
-            balls[selection].GetComponent<MeshRenderer>().material.color = balls[selection + 1].GetComponent<MeshRenderer>().material.color;
-            balls[selection + 1].GetComponent<MeshRenderer>().material.color = temp;
+            Color temp = balls[selection].Color;
+            balls[selection].Color = balls[selection + 1].Color;
+            balls[selection + 1].Color = temp;
+
+            ClearReapeating(collisionSpot);
         }
+    }
+
+    private void ClearReapeating(int pos)
+    {
+        int end = pos;
+        int start = pos;
+        Color currentColor = balls[pos].Color;
+
+        while(end < balls.Count && balls[end].Color == currentColor)
+            end++;
+        while(start >= 0 && balls[start].Color == currentColor)
+            start--;
+
+        start++;
+        end--;
+
+        if(end - start + 1 >= minimumInRow)
+        {
+            retractHead = true;
+            retractIndex = start;
+            for(int j = 0; j < end - start + 1; j++)
+            {
+                Destroy(balls[start].gameObject);
+                balls.RemoveAt(start);
+                ballOffsets.RemoveAt(start);
+            }
+        }
+
     }
 
     public Ball GetRandomBall()

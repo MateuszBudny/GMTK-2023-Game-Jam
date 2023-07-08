@@ -441,6 +441,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1958716312581771002, guid: 8fea9f97fd99e404caac709a319869a7,
         type: 3}
+    - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
+        type: 3}
+      propertyPath: minimumInRow
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7642440360602836015, guid: 57bccfcbee07537488fac603bd1c2661,
         type: 3}
       propertyPath: m_RootOrder
