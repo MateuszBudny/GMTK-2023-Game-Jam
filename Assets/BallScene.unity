@@ -432,6 +432,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
         type: 3}
+      propertyPath: numOfBalls
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
+        type: 3}
       propertyPath: ballTemplate
       value: 
       objectReference: {fileID: 1958716312581771002, guid: 8fea9f97fd99e404caac709a319869a7,
@@ -569,8 +574,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shooter
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2242353564750173890, guid: 2cf3205ddf6ceb84f9444cd7bf400576, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
