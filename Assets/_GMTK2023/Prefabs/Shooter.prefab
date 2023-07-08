@@ -31,7 +31,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2242353564750173890
 MonoBehaviour:
@@ -46,9 +46,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ballManager: {fileID: 0}
-  coolDown: 2
-  speed: 2
-  ballTemplate: {fileID: 4683756622583942575, guid: 8fea9f97fd99e404caac709a319869a7,
+  shootingCooldown: 5
+  ballStartingSpeed: 2
+  ballTemplate: {fileID: 1958716312581771002, guid: 8fea9f97fd99e404caac709a319869a7,
     type: 3}
 --- !u!212 &8716806595320570778
 SpriteRenderer:

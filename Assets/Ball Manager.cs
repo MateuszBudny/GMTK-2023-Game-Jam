@@ -217,9 +217,9 @@ public class BallManager : MonoBehaviour
         return colors[Random.Range(0, colors.Count)];
     }
 
-    public void TrackBall(GameObject ball)
+    public void TrackBall(Ball ball)
     {
-        trackedBall = ball;
+        trackedBall = ball.gameObject;
     }
 
     public bool Tracking()
