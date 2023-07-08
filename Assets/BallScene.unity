@@ -417,9 +417,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
         type: 3}
+      propertyPath: speed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
+        type: 3}
       propertyPath: spline
       value: 
       objectReference: {fileID: 1887977371}
+    - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
+        type: 3}
+      propertyPath: slowDown
+      value: -2
+      objectReference: {fileID: 0}
     - target: {fileID: 7642440360602836015, guid: 57bccfcbee07537488fac603bd1c2661,
         type: 3}
       propertyPath: m_RootOrder

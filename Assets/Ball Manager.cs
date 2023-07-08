@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -21,6 +22,8 @@ public class BallManager : MonoBehaviour
     float speed = 5;
     [SerializeField]
     float slowDown = 5;
+    [SerializeField]
+    float speedUp = 5;
 
     float actualSpeed = 5;
 
@@ -42,9 +45,6 @@ public class BallManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        head = Instantiate(ballTemplate, this.transform);
-        balls.Add(head);
-        ballOffsets.Add(0);
         selection = 1;
 
         spawnPoint = spline.EvaluatePosition(0);
@@ -81,6 +81,8 @@ public class BallManager : MonoBehaviour
     {
 
         float delta = Time.deltaTime * actualSpeed / spline.CalculateLength();
+        
+
 
         for(int i = balls.Count - 1; i >= collisionSpot; i--)
         {
@@ -93,8 +95,9 @@ public class BallManager : MonoBehaviour
                 ballOffsets[i] -= delta;
             }
         }
-        if((balls[collisionSpot].transform.position - balls[collisionSpot - 1].transform.position).magnitude > 2 * ballRadius)
+        if(collisionSpot == 0 || collisionSpot == balls.Count || (balls[collisionSpot].transform.position - balls[collisionSpot - 1].transform.position).magnitude > 4 * ballRadius)
         {
+            
             balls.Insert(collisionSpot, trackedBall);
             ballOffsets.Insert(collisionSpot, (ballOffsets[collisionSpot] + ballOffsets[collisionSpot - 1]) / 2);
             
@@ -129,21 +132,25 @@ public class BallManager : MonoBehaviour
         float delta = Time.deltaTime * actualSpeed / spline.CalculateLength();
         bool reversed = delta < 0;
 
-        head.transform.position = spline.EvaluatePosition(ballOffsets[0] + delta);
-        ballOffsets[0] += delta;
-
-        for(int i = 1; i < balls.Count; i++)
+        int start = reversed ? balls.Count - 1 : 0;
+        int end = reversed ? -1 : balls.Count;
+        for(int i = start; i != end; i+= reversed ? -1 : 1)
         {
             Vector3 newPosition = spline.EvaluatePosition(ballOffsets[i] + delta);
 
-            if((newPosition - balls[i - 1].transform.position).magnitude >= 2 * ballRadius)
+            if(    (!reversed  && i == 0)
+                || ( reversed && i == balls.Count - 1)
+                || (newPosition - balls[i - (reversed ? -1 : 1)].transform.position).magnitude >= 2 * ballRadius)
             {
                 balls[i].transform.position = newPosition;
                 ballOffsets[i] += delta;
+                ballOffsets[i] = Mathf.Clamp(ballOffsets[i], 0, 1);
             }
         }
 
-        if((balls.Last().transform.position - spawnPoint).magnitude > ballRadius && balls.Count < numOfBalls)
+
+
+        if(balls.Count == 0 || ((balls.Last().transform.position - spawnPoint).magnitude > ballRadius && balls.Count < numOfBalls))
         {
             GameObject go = Instantiate(ballTemplate, this.transform);
             go.transform.position = spawnPoint;
@@ -180,11 +187,11 @@ public class BallManager : MonoBehaviour
     {
         if(Input.GetKey(KeyCode.UpArrow))
         {
-            actualSpeed = speed * slowDown;
+            actualSpeed = speed * speedUp;
         }
         else if(Input.GetKey(KeyCode.DownArrow))
         {
-            actualSpeed = speed / slowDown;
+            actualSpeed = speed * slowDown;
         }
 
 
@@ -209,7 +216,7 @@ public class BallManager : MonoBehaviour
 
     public GameObject GetRandomBall()
     {
-        return balls[Random.Range(0, balls.Count)];
+        return balls.Count == 0 ? null : balls[Random.Range(0, balls.Count)];
     }
 
     public Color GetRandomColor()
@@ -227,3 +234,5 @@ public class BallManager : MonoBehaviour
         return trackedBall != null;
     }
 }
+
+
