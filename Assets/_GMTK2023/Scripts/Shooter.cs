@@ -49,13 +49,15 @@ public class Shooter : MonoBehaviour
     {
         if(trackedBall == null)
         {
-            trackedBall = ballManager.GetRandomBall().GetComponent<Ball>();
+            trackedBall = ballManager.GetRandomBall();
         }
-
-        lastPosition = trackedBall.transform.position;
-        float distanceToBall = (transform.position - trackedBall.transform.position).magnitude;
-        ballVelocity = (transform.position - lastPosition).normalized;
-        transform.LookAt(trackedBall.transform.position + ballVelocity * distanceToBall / ballStartingSpeed);
+        if(trackedBall != null)
+        {
+            lastPosition = trackedBall.transform.position;
+            float distanceToBall = (transform.position - trackedBall.transform.position).magnitude;
+            ballVelocity = (transform.position - lastPosition).normalized;
+            transform.LookAt(trackedBall.transform.position + ballVelocity * distanceToBall / ballStartingSpeed);
+        }
     }
 
     private void CooldownElapsing()

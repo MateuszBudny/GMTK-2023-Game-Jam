@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -28,18 +28,20 @@ public class BallManager : MonoBehaviour
     float actualSpeed = 5;
 
     [SerializeField]
-    GameObject ballTemplate;
+    Ball ballTemplate;
 
     Vector3 spawnPoint = Vector3.zero;
 
 
     int selection = 0;
     GameObject head;
-    public List<GameObject> balls = new List<GameObject>();
+    public List<Ball> balls = new List<Ball>();
     List<float> ballOffsets = new List<float>();
 
 
-    GameObject trackedBall;
+    Ball trackedBall;
+    float expectedOffset;
+    Vector3 expectedPosition;
     int collisionSpot = -1;
 
     // Start is called before the first frame update
@@ -70,7 +72,11 @@ public class BallManager : MonoBehaviour
         if(trackedBall != null && collisionSpot < 0)
         {
             collisionSpot = CheckCollision();
-
+            if(collisionSpot > 0)
+            {
+                expectedOffset = ExpectedOffset(collisionSpot);
+                expectedPosition = spline.EvaluatePosition(expectedOffset);
+            }
         }
 
         HighlightSelectedBalls();
@@ -81,8 +87,10 @@ public class BallManager : MonoBehaviour
     {
 
         float delta = Time.deltaTime * actualSpeed / spline.CalculateLength();
-        
 
+        
+        
+        trackedBall.Velocity = (expectedPosition - trackedBall.transform.position) * actualSpeed * 1.2f;
 
         for(int i = balls.Count - 1; i >= collisionSpot; i--)
         {
@@ -99,11 +107,25 @@ public class BallManager : MonoBehaviour
         {
             
             balls.Insert(collisionSpot, trackedBall);
-            ballOffsets.Insert(collisionSpot, (ballOffsets[collisionSpot] + ballOffsets[collisionSpot - 1]) / 2);
+            ballOffsets.Insert(collisionSpot, expectedOffset);
             
             collisionSpot = -1;
+            trackedBall.State = BallState.InSnake;
             trackedBall = null;
         }
+    }
+
+    private float ExpectedOffset(int index)
+    {
+        if(index == 0)
+        {
+            return ballOffsets[0] + (ballOffsets[0] - ballOffsets[1]);
+        }
+        if(index == balls.Count)
+        {
+            return ballOffsets[balls.Count - 1] + (ballOffsets[balls.Count - 1] - ballOffsets[balls.Count - 2]);
+        }
+        return ballOffsets[index];
     }
 
     private int CheckCollision()
@@ -152,7 +174,7 @@ public class BallManager : MonoBehaviour
 
         if(balls.Count == 0 || ((balls.Last().transform.position - spawnPoint).magnitude > ballRadius && balls.Count < numOfBalls))
         {
-            GameObject go = Instantiate(ballTemplate, this.transform);
+            Ball go = Instantiate(ballTemplate, this.transform);
             go.transform.position = spawnPoint;
             go.GetComponent<MeshRenderer>().material.color = colors[Random.Range(0, colors.Count)];
             balls.Add(go);
@@ -214,7 +236,7 @@ public class BallManager : MonoBehaviour
         }
     }
 
-    public GameObject GetRandomBall()
+    public Ball GetRandomBall()
     {
         return balls.Count == 0 ? null : balls[Random.Range(0, balls.Count)];
     }
@@ -226,7 +248,7 @@ public class BallManager : MonoBehaviour
 
     public void TrackBall(Ball ball)
     {
-        trackedBall = ball.gameObject;
+        trackedBall = ball;
     }
 
     public bool Tracking()
