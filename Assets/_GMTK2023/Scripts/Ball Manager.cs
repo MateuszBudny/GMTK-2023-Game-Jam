@@ -115,7 +115,7 @@ public class BallManager : MonoBehaviour
             balls.Insert(collisionSpot, trackedBall);
             ballOffsets.Insert(collisionSpot, expectedOffset);
 
-            ClearReapeating(collisionSpot);
+            ClearRepeating(collisionSpot);
 
             collisionSpot = -1;
             trackedBall.State = BallState.InSnake;
@@ -185,18 +185,24 @@ public class BallManager : MonoBehaviour
             if(retractHead && i == start && (newPosition - balls[i - (reversed ? -1 : 1)].transform.position).magnitude < 2 * ballRadius)
             {
                 retractHead = false;
+                if(balls[i].Color == balls[i+1].Color)
+                {
+                    ClearRepeating(start);
+                }
+                
             }
         }
 
 
 
-        if(balls.Count == 0 || ((balls.Last().transform.position - spawnPoint).magnitude > ballRadius && balls.Count < numOfBalls))
+        if(balls.Count == 0 || ((balls.Last().transform.position - spawnPoint).magnitude > ballRadius && 0 < numOfBalls))
         {
             Ball go = Instantiate(ballTemplate, this.transform);
             go.UpdateParameters(spawnPoint, spline.EvaluateTangent(0), actualSpeed / spline.CalculateLength());
             go.Color = colors[Random.Range(0, colors.Count)];
             balls.Add(go);
             ballOffsets.Add(0);
+            numOfBalls--;
         }
     }
 
@@ -252,11 +258,11 @@ public class BallManager : MonoBehaviour
             balls[selection].Color = balls[selection + 1].Color;
             balls[selection + 1].Color = temp;
 
-            ClearReapeating(collisionSpot);
+            ClearRepeating(collisionSpot);
         }
     }
 
-    private void ClearReapeating(int pos)
+    private void ClearRepeating(int pos)
     {
         int end = pos;
         int start = pos;
