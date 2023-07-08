@@ -62,7 +62,8 @@ public class BallManager : MonoBehaviour
     {
         actualSpeed = speed;
 
-        HandleInput();
+        if(!(collisionSpot >= 0 || retractHead))
+            HandleInput();
 
         if(collisionSpot >= 0)
         {
@@ -165,6 +166,8 @@ public class BallManager : MonoBehaviour
         int start = reversed ? balls.Count - 1 : 0;
         int end = reversed ? -1 : balls.Count;
         start = retractHead ? retractIndex - 1 : start;
+        delta = retractHead ? -delta : delta;
+        
 
         for(int i = start; i != end; i += reversed ? -1 : 1)
         {
@@ -177,6 +180,11 @@ public class BallManager : MonoBehaviour
                 balls[i].UpdateParameters(newPosition, newPosition - balls[i].transform.position, actualSpeed / spline.CalculateLength());
                 ballOffsets[i] += delta;
                 ballOffsets[i] = Mathf.Clamp(ballOffsets[i], 0, 1);
+            }
+
+            if(retractHead && i == start && (newPosition - balls[i - (reversed ? -1 : 1)].transform.position).magnitude < 2 * ballRadius)
+            {
+                retractHead = false;
             }
         }
 
@@ -264,8 +272,11 @@ public class BallManager : MonoBehaviour
 
         if(end - start + 1 >= minimumInRow)
         {
-            retractHead = true;
-            retractIndex = start;
+            if(start != 0 && end != balls.Count - 1)
+            {
+                retractHead = true;
+                retractIndex = start;
+            }
             for(int j = 0; j < end - start + 1; j++)
             {
                 Destroy(balls[start].gameObject);
