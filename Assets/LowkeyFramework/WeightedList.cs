@@ -1,9 +1,9 @@
-using Unity.Plastic.Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Newtonsoft.Json;
 
 [Serializable]
 public class WeightedList<T> where T : IWeightedElement
