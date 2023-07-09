@@ -93,9 +93,9 @@ public class BallManager : SingleBehaviour<BallManager>
 
         if(finished)
         {
+            actualSpeed = speed * speedUp;
             MoveBallsInSnake();
             return;
-
         }
 
         
