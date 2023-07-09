@@ -1,10 +1,13 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+    public float flyingLifeTime = 10f;
+
     public BallState State { get => state; set => state = value; }
 
     public Vector3 Velocity { get; set; }
@@ -15,6 +18,7 @@ public class Ball : MonoBehaviour
     private BallState state = BallState.InSnake;
     private MeshRenderer meshRenderer;
     private float progress;
+    private float flyingLifeTimePassed = 0f;
 
     private void Awake()
     {
@@ -26,7 +30,19 @@ public class Ball : MonoBehaviour
         if(State == BallState.Flying)
         {
             transform.position += Velocity * Time.deltaTime;
+            flyingLifeTimePassed += Time.deltaTime;
+
+            if(flyingLifeTimePassed > flyingLifeTime)
+            {
+                KillThisBall();
+            }
         }
+    }
+
+    public void KillThisBall()
+    {
+        BallManager.Instance.UntrackBall(this);
+        Destroy(gameObject);
     }
 
     public void UpdateParameters(Vector3 newPos, Vector3 dir, float speed)
