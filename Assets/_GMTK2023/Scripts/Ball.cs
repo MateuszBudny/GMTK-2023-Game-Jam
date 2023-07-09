@@ -9,10 +9,11 @@ public class Ball : MonoBehaviour
     public Vector3 Velocity { get; set; }
 
     public Color Color { get => meshRenderer.material.color; set => meshRenderer.material.color = value; }
+    public float Progress { get => progress; set => progress = value; }
 
     private BallState state = BallState.InSnake;
     private MeshRenderer meshRenderer;
-
+    private float progress;
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>(); 
