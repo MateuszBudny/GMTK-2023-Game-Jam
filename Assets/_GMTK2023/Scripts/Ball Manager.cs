@@ -62,6 +62,7 @@ public class BallManager : SingleBehaviour<BallManager>
     List<RetractionPackage> retractions = new List<RetractionPackage>();
 
     private bool finished = false;
+    private bool lost = false;
 
     public SplineContainer Spline { get => spline; private set => spline = value; }
 
@@ -82,24 +83,39 @@ public class BallManager : SingleBehaviour<BallManager>
     {
         actualSpeed = speed;
 
+        if(lost)
+        {
+            return;
+        }
+            
+
+        if(finished)
+        {
+            MoveBallsInSnake();
+            return;
+
+        }
+
+        
         if(!isInputDisabled())
             HandleInput();
 
-        if(isCollisionInProgress())
-        {
-            for(int i = collisions.Count - 1; i >= 0; --i)
-            {
-                CollisionPackage cp = collisions[i];
-                if(cp.collisionSpot >= 0)
-                    InsertBall(cp);
-            }
-            
-        }
-        else
-        {
-            MoveBalls();
-        }
+        MoveBallsInSnake();
 
+        CheckCollisionWithTrackedBalls();
+
+
+        CheckIfFinished();
+
+
+        SetTailAndHead();
+
+        //HighlightSelectedBalls();
+
+    }
+
+    private void CheckCollisionWithTrackedBalls()
+    {
         foreach(CollisionPackage cp in collisions)
         {
             if(cp.trackedBall != null && cp.collisionSpot < 0)
@@ -114,7 +130,10 @@ public class BallManager : SingleBehaviour<BallManager>
                 }
             }
         }
+    }
 
+    private void CheckIfFinished()
+    {
         if(balls[0].Progress > finishProgress)
         {
             finished = true;
@@ -128,11 +147,25 @@ public class BallManager : SingleBehaviour<BallManager>
             }
             Debug.Log("Finished");
         }
+    }
 
-        SetTailAndHead();
+    private void MoveBallsInSnake()
+    {
 
-        //HighlightSelectedBalls();
+        if(isCollisionInProgress())
+        {
+            for(int i = collisions.Count - 1; i >= 0; --i)
+            {
+                CollisionPackage cp = collisions[i];
+                if(cp.collisionSpot >= 0)
+                    InsertBall(cp);
+            }
 
+        }
+        else
+        {
+            MoveBalls();
+        }
     }
 
     private void SetTailAndHead()
@@ -168,7 +201,7 @@ public class BallManager : SingleBehaviour<BallManager>
 
     private bool isInputDisabled()
     {
-        return isCollisionInProgress() || isRetractionInProgress();
+        return isCollisionInProgress() || isRetractionInProgress() || finished || lost;
     }
 
     private void InsertBall(CollisionPackage cp)
@@ -400,6 +433,12 @@ public class BallManager : SingleBehaviour<BallManager>
             {
                 Destroy(balls[start].gameObject);
                 balls.RemoveAt(start);
+                
+            }
+
+            if(balls.Count == 0)
+            {
+                lost = true;
             }
         }
     }
@@ -433,6 +472,11 @@ public class BallManager : SingleBehaviour<BallManager>
     public bool Finished()
     {
         return finished;
+    }
+
+    public bool Lost()
+    {
+        return lost;
     }
 
 }
