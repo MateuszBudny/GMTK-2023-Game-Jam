@@ -110,11 +110,11 @@ public class BallManager : SingleBehaviour<BallManager>
     private void SetTailAndHead()
     {
         head.transform.parent = balls[0].transform;
-        head.transform.localPosition = new Vector3(2 * ballRadius, 0, 0);
+        head.transform.localPosition = new Vector3(0, 0, 2 * ballRadius);
         head.transform.localRotation = Quaternion.identity;
 
         tail.transform.parent = balls.Last().transform;
-        tail.transform.localPosition = new Vector3(-2*ballRadius, 0, 0);
+        tail.transform.localPosition = new Vector3(0, 0, -2 * ballRadius);
         tail.transform.localRotation = Quaternion.identity;
     }
 
@@ -167,11 +167,24 @@ public class BallManager : SingleBehaviour<BallManager>
             balls.Insert(cp.collisionSpot, cp.trackedBall);
             balls[cp.collisionSpot].Progress = cp.expectedOffset;
 
+            UpdateRetractions(cp.collisionSpot);
+
             ClearRepeating(cp.collisionSpot);
 
             cp.trackedBall.State = BallState.InSnake;
 
             collisions.Remove(cp);
+        }
+    }
+
+    private void UpdateRetractions(int collisionSpot)
+    {
+        foreach(RetractionPackage rp in retractions)
+        {
+            if(rp.retractIndex >= collisionSpot)
+            {
+                rp.retractIndex++;
+            }
         }
     }
 
@@ -243,7 +256,7 @@ public class BallManager : SingleBehaviour<BallManager>
                 || balls[i - (reversed ? -1 : 1)].distanceToPoint(newPosition) >= 2 * ballRadius)
             {
                 balls[i].UpdateParameters(newPosition, newPosition - balls[i].transform.position, actualSpeed / Spline.CalculateLength());
-                balls[i].transform.right = Spline.EvaluateTangent(balls[i].Progress + delta);
+                balls[i].transform.forward = Spline.EvaluateTangent(balls[i].Progress + delta);
                 balls[i].Progress += delta;
                 balls[i].Progress = Mathf.Clamp(balls[i].Progress, 0, 1);
             }
@@ -258,6 +271,7 @@ public class BallManager : SingleBehaviour<BallManager>
                     ClearRepeating(start);
                 }
 
+                Debug.Log("Removing retraction" + currentResolving.retractIndex);
                 retractions.Remove(currentResolving);
             }
         }
@@ -351,6 +365,7 @@ public class BallManager : SingleBehaviour<BallManager>
                 RetractionPackage rp = new RetractionPackage();
                 rp.retractHead = true;
                 rp.retractIndex = start;
+                Debug.Log("Adding retraction." + rp.retractIndex);
                 retractions.Add(rp);
             }
             for(int j = 0; j < end - start + 1; j++)
