@@ -122,7 +122,7 @@ public class BallManager : SingleBehaviour<BallManager>
             {
                 if(collisions[i].collisionSpot < 0)
                 {
-                    collisions[i].KillThisBall();
+                    collisions[i].trackedBall.KillThisBall();
                     collisions.RemoveAt(i);
                 }
             }
