@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PreciseShooterTracking : ShooterTracking
 {
-    public override Vector3 GetShooterLookAtPosition(float shootingBallSpeed)
+    public override Vector3 GetShooterLookAtPosition(float shootingBallSpeed, Vector3 shootingBallSpawnPosition)
     {
         float distanceThatTheShootingBallWillTravelBeforeGettingYou = (transform.position - TrackedBall.transform.position).magnitude;
         float timeThatWillTakeShootingBallToGetYou = distanceThatTheShootingBallWillTravelBeforeGettingYou / shootingBallSpeed;

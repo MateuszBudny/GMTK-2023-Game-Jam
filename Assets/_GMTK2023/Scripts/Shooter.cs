@@ -48,6 +48,7 @@ public class Shooter : MonoBehaviour
     {
         ballSpawnedWaitingForShoot.State = BallState.Flying;
         ballSpawnedWaitingForShoot.Velocity = transform.forward * ballStartingSpeed;
+        ballSpawnedWaitingForShoot.transform.parent = ballManager.transform;
         ballManager.TrackBall(ballSpawnedWaitingForShoot);
         ballSpawnedWaitingForShoot = null;
 
@@ -74,7 +75,7 @@ public class Shooter : MonoBehaviour
 
         if(startingTracker.TrackedBall != null)
         {
-            Vector3 shooterLookAtPos = startingTracker.GetShooterLookAtPosition(ballStartingSpeed);
+            Vector3 shooterLookAtPos = startingTracker.GetShooterLookAtPosition(ballStartingSpeed, ballSpawnPoint.position);
             Vector3 direction = shooterLookAtPos - transform.position;
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             targetYAngle = targetRotation.eulerAngles.y;
@@ -103,7 +104,7 @@ public class Shooter : MonoBehaviour
 
     private void SpawnBallToShoot()
     {
-        ballSpawnedWaitingForShoot = Instantiate(BallManager.Instance.GetBallTemplateOfRandomColor(), ballSpawnPoint.position, Quaternion.identity, ballManager.transform);
+        ballSpawnedWaitingForShoot = Instantiate(BallManager.Instance.GetBallTemplateOfRandomColor(), ballSpawnPoint.position, Quaternion.identity, transform);
         ballSpawnedWaitingForShoot.State = BallState.SpawnedWaitingForShoot;
     }
 }
