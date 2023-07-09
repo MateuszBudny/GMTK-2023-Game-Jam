@@ -26,7 +26,9 @@ public class BallManager : SingleBehaviour<BallManager>
     [SerializeField]
     float speedUp = 5;
     [SerializeField]
-    float startingProgress;
+    float startingProgress=0.2f;
+    [SerializeField]
+    float finishProgress =0.8f;
 
     float actualSpeed = 5;
 
@@ -59,6 +61,7 @@ public class BallManager : SingleBehaviour<BallManager>
     List<CollisionPackage> collisions = new List<CollisionPackage>();
     List<RetractionPackage> retractions = new List<RetractionPackage>();
 
+    private bool finished = false;
 
     public SplineContainer Spline { get => spline; private set => spline = value; }
 
@@ -110,6 +113,20 @@ public class BallManager : SingleBehaviour<BallManager>
                     SoundManager.Instance.PlayEnvironmentSound(newBallJoinedSnakeSound);
                 }
             }
+        }
+
+        if(balls[0].Progress > finishProgress)
+        {
+            finished = true;
+            for(int i = collisions.Count - 1; i >= 0; i--)
+            {
+                if(collisions[i].collisionSpot < 0)
+                {
+                    collisions[i].KillThisBall();
+                    collisions.RemoveAt(i);
+                }
+            }
+            Debug.Log("Finished");
         }
 
         SetTailAndHead();
@@ -269,7 +286,6 @@ public class BallManager : SingleBehaviour<BallManager>
                 balls[i].UpdateParameters(newPosition, newPosition - balls[i].transform.position, actualSpeed / Spline.CalculateLength());
                 balls[i].transform.forward = Spline.EvaluateTangent(balls[i].Progress + delta);
                 balls[i].Progress += delta;
-                balls[i].Progress = Mathf.Clamp(balls[i].Progress, 0, 1);
             }
 
             if(isRetractionInProgress() 
@@ -328,7 +344,7 @@ public class BallManager : SingleBehaviour<BallManager>
         {
             actualSpeed = speed * speedUp;
         }
-        else if(Input.GetKey(KeyCode.DownArrow))
+        else if(Input.GetKey(KeyCode.DownArrow) && !finished)
         {
             actualSpeed = speed * slowDown;
         }
@@ -413,6 +429,12 @@ public class BallManager : SingleBehaviour<BallManager>
     {
         return collisions.Count > 0;
     }
+
+    public bool Finished()
+    {
+        return finished;
+    }
+
 }
 
 
