@@ -19,6 +19,8 @@ public class Shooter : MonoBehaviour
     private float maxRotationSpeed = 1f;
     [SerializeField]
     private Transform ballSpawnPoint;
+    [SerializeField]
+    private GameObject heart;
 
     [BoxGroup("Starting Modules")]
     [SerializeField]

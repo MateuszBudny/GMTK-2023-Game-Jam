@@ -7798,6 +7798,11 @@ PrefabInstance:
       objectReference: {fileID: 1973593198}
     - target: {fileID: 2242353564750173890, guid: 2cf3205ddf6ceb84f9444cd7bf400576,
         type: 3}
+      propertyPath: maxRotationSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242353564750173890, guid: 2cf3205ddf6ceb84f9444cd7bf400576,
+        type: 3}
       propertyPath: shootingCooldown
       value: 0.5
       objectReference: {fileID: 0}
