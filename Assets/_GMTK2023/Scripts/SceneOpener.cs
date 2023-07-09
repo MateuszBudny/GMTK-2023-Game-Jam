@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenuManager : MonoBehaviour
+public class SceneOpener : MonoBehaviour
 {
     [SerializeField]
-    private string Lvl1SceneName = "LVL1";
+    private string sceneToOpen = "LVL1";
     [SerializeField]
     private AudioClip buttonClickSound;
 
-    public void OnStartButtonClick()
+    public void OpenScene()
     {
         SoundManager.Instance.PlayEnvironmentSound(buttonClickSound);
-        SceneManager.LoadScene(Lvl1SceneName);
+        SceneManager.LoadScene(sceneToOpen);
     }
 }
