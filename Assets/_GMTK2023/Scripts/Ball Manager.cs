@@ -379,22 +379,22 @@ public class BallManager : SingleBehaviour<BallManager>
 
     void HandleInput()
     {
-        if(Input.GetKey(KeyCode.UpArrow))
+        if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
             actualSpeed = speed * speedUp;
         }
-        else if(Input.GetKey(KeyCode.DownArrow) && !finished)
+        else if((Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) && !finished)
         {
             actualSpeed = speed * slowDown;
         }
 
 
-        if(Input.GetKeyDown(KeyCode.LeftArrow))
+        if(Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             selection++;
             selection = Mathf.Min(selection, balls.Count - 1);
         }
-        else if(Input.GetKeyDown(KeyCode.RightArrow))
+        else if(Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
             selection--;
             selection = Mathf.Max(selection, 0);
