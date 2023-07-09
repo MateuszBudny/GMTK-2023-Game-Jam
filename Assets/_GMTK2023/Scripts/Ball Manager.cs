@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using NaughtyAttributes;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -40,6 +41,16 @@ public class BallManager : SingleBehaviour<BallManager>
     GameObject head;
     [SerializeField]
     GameObject tail;
+
+    [BoxGroup("Sounds")]
+    [SerializeField]
+    private AudioClip newBallJoinedSnakeSound;
+    [BoxGroup("Sounds")]
+    [SerializeField]
+    private AudioClip mergeBallsSound;
+    [BoxGroup("Sounds")]
+    [SerializeField]
+    private AudioClip winSound;
 
 
     public List<Ball> balls = new List<Ball>();
@@ -96,7 +107,7 @@ public class BallManager : SingleBehaviour<BallManager>
                     cp.expectedOffset = ExpectedOffset(cp.collisionSpot);
                     cp.expectedPosition = Spline.EvaluatePosition(cp.expectedOffset);
                     cp.trackedBall.Velocity = (cp.expectedPosition - cp.trackedBall.transform.position)/ (2 * ballRadius) * speed;
-
+                    SoundManager.Instance.PlayEnvironmentSound(newBallJoinedSnakeSound);
                 }
             }
         }
@@ -367,6 +378,7 @@ public class BallManager : SingleBehaviour<BallManager>
                 rp.retractIndex = start;
                 Debug.Log("Adding retraction." + rp.retractIndex);
                 retractions.Add(rp);
+                SoundManager.Instance.PlayEnvironmentSound(mergeBallsSound);
             }
             for(int j = 0; j < end - start + 1; j++)
             {

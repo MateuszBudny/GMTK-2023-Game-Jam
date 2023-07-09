@@ -59,4 +59,8 @@ MonoBehaviour:
   minimumInRow: 2
   head: {fileID: 7019606496990310091, guid: 7a3c74930205e7a459186c3a04fa87f9, type: 3}
   tail: {fileID: 7930205327562230135, guid: 97c0783037e02f547879f1c575427892, type: 3}
+  newBallJoinedSnakeSound: {fileID: 8300000, guid: f7d663f3ff42c3b47b92d20b97eb02d8,
+    type: 3}
+  mergeBallsSound: {fileID: 8300000, guid: 90f97a682383ea4428f5db9ca476d150, type: 3}
+  winSound: {fileID: 8300000, guid: ce955f31a8a5e03448f9b53d3906df80, type: 3}
   balls: []

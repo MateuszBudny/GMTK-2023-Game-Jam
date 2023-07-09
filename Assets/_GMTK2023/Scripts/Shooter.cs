@@ -27,6 +27,19 @@ public class Shooter : MonoBehaviour
     [SerializeField]
     private ShooterChoosingBallToTrack startingChooser;
 
+    [BoxGroup("Sounds")]
+    [SerializeField]
+    private AudioClip lvlMusic;
+    [BoxGroup("Sounds")]
+    [SerializeField]
+    private AudioClip lvlAmbient;
+    [BoxGroup("Sounds")]
+    [SerializeField]
+    private AudioClip shootingSound;
+    [BoxGroup("Sounds")]
+    [SerializeField]
+    private AudioClip spawnShootingBallSound;
+
     private Ball ballSpawnedWaitingForShoot;
     private float currentCooldown;
     private float targetYAngle;
@@ -34,6 +47,8 @@ public class Shooter : MonoBehaviour
     private void Start()
     {
         StartCoroutine(LoadNewBallAfterDelay());
+        SoundManager.Instance.PlayMusic(lvlMusic);
+        SoundManager.Instance.PlayAmbient(lvlAmbient);
     }
 
     private void Update()
@@ -51,6 +66,7 @@ public class Shooter : MonoBehaviour
         ballSpawnedWaitingForShoot.transform.parent = ballManager.transform;
         ballManager.TrackBall(ballSpawnedWaitingForShoot);
         ballSpawnedWaitingForShoot = null;
+        SoundManager.Instance.PlayEnvironmentSound(shootingSound);
 
         StartCoroutine(LoadNewBallAfterDelay());
     }
@@ -106,5 +122,6 @@ public class Shooter : MonoBehaviour
     {
         ballSpawnedWaitingForShoot = Instantiate(BallManager.Instance.GetBallTemplateOfRandomColor(), ballSpawnPoint.position, Quaternion.identity, transform);
         ballSpawnedWaitingForShoot.State = BallState.SpawnedWaitingForShoot;
+        SoundManager.Instance.PlayEnvironmentSound(spawnShootingBallSound);
     }
 }

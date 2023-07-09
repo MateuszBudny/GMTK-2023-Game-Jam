@@ -7,9 +7,12 @@ public class MainMenuManager : MonoBehaviour
 {
     [SerializeField]
     private string Lvl1SceneName = "LVL1";
+    [SerializeField]
+    private AudioClip buttonClickSound;
 
     public void OnStartButtonClick()
     {
+        SoundManager.Instance.PlayEnvironmentSound(buttonClickSound);
         SceneManager.LoadScene(Lvl1SceneName);
     }
 }
