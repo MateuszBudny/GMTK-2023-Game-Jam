@@ -5537,7 +5537,7 @@ MonoBehaviour:
     space: 0
   m_DeprecatedInstances: []
   m_AutoRefresh: 1
-  m_Seed: -246366
+  m_Seed: 1448482251
 --- !u!1001 &813606823
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7764,7 +7764,7 @@ PrefabInstance:
     - target: {fileID: 2242353564750173890, guid: 2cf3205ddf6ceb84f9444cd7bf400576,
         type: 3}
       propertyPath: ballStartingSpeed
-      value: 10
+      value: 7.5
       objectReference: {fileID: 0}
     - target: {fileID: 2242353564750173890, guid: 2cf3205ddf6ceb84f9444cd7bf400576,
         type: 3}

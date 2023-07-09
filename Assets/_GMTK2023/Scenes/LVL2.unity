@@ -2506,7 +2506,7 @@ PrefabInstance:
     - target: {fileID: 8098794244378928931, guid: eb6001caae16005479480cb6d75ad9c2,
         type: 3}
       propertyPath: shootingCooldown
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8098794244378928931, guid: eb6001caae16005479480cb6d75ad9c2,
         type: 3}
@@ -2516,7 +2516,7 @@ PrefabInstance:
     - target: {fileID: 8098794244378928931, guid: eb6001caae16005479480cb6d75ad9c2,
         type: 3}
       propertyPath: shootingBallSpawnDelayAfterShoot
-      value: 0.25
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7153978254998954167, guid: eb6001caae16005479480cb6d75ad9c2, type: 3}
