@@ -62,6 +62,10 @@ public class Shooter : MonoBehaviour
             SmoothlyRotateIfNeeded();
             CooldownElapsing();
         }
+        else if(!heart.activeSelf && BallManager.Instance.IsSnakeAtTheEndOfSpline())
+        {
+            heart.SetActive(true);
+        }
     }
 
     private void ShootBall()

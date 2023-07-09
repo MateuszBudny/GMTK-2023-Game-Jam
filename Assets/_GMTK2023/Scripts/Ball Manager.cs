@@ -116,6 +116,8 @@ public class BallManager : SingleBehaviour<BallManager>
 
     }
 
+    public bool IsSnakeAtTheEndOfSpline() => balls[0].Progress > 1f;
+
     private void CheckCollisionWithTrackedBalls()
     {
         foreach(CollisionPackage cp in collisions)
