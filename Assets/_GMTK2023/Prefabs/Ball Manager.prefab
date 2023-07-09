@@ -55,5 +55,8 @@ MonoBehaviour:
   speed: 2
   slowDown: -2
   speedUp: 5
+  startingProgress: 0
   minimumInRow: 2
+  head: {fileID: 7019606496990310091, guid: 7a3c74930205e7a459186c3a04fa87f9, type: 3}
+  tail: {fileID: 7930205327562230135, guid: 97c0783037e02f547879f1c575427892, type: 3}
   balls: []
