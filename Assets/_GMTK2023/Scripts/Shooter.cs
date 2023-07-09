@@ -53,10 +53,13 @@ public class Shooter : MonoBehaviour
 
     private void Update()
     {
-        TrackChosenBall();
-        CheckIfShouldShoot();
-        SmoothlyRotateIfNeeded();
-        CooldownElapsing();
+        if(!BallManager.Instance.Finished())
+        {
+            TrackChosenBall();
+            CheckIfShouldShoot();
+            SmoothlyRotateIfNeeded();
+            CooldownElapsing();
+        }
     }
 
     private void ShootBall()
