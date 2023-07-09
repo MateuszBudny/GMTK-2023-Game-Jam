@@ -15,6 +15,12 @@ EditorBuildSettings:
     path: Assets/_GMTK2023/Scenes/Intro.unity
     guid: 9594e06ed3119564fbf3a3bf7379a8d9
   - enabled: 1
+    path: Assets/_GMTK2023/Scenes/LVL2.unity
+    guid: 6d9935c633802d04d9bfd106ddc47ba5
+  - enabled: 1
     path: Assets/BallScene.unity
     guid: d7a5909f98dab0e42aa3ce10aa0fb435
+  - enabled: 1
+    path: Assets/_GMTK2023/Scenes/LVL3.unity
+    guid: 6d16c248d08eba746ba3b84a04d13b0d
   m_configObjects: {}
