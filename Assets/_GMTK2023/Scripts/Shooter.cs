@@ -1,30 +1,38 @@
+using NaughtyAttributes;
+using System;
 using UnityEngine;
 
 public class Shooter : MonoBehaviour
 {
     [SerializeField]
     private BallManager ballManager;
-
     [SerializeField]
     private float shootingCooldown = 5f;
-
     [SerializeField]
     private float ballStartingSpeed = 2f;
-
     [SerializeField]
     private Ball ballTemplate;
+    [SerializeField]
+    private float maxRotationSpeed = 1f;
 
-    private float currentCoolDown = 0f;
-    private Ball trackedBall;
-    private Vector3 ballVelocity;
-    private Vector3 lastPosition;
+    [BoxGroup("Starting Modules")]
+    [SerializeField]
+    private ShooterTracking startingTracker;
+    [BoxGroup("Starting Modules")]
+    [SerializeField]
+    private ShooterChoosingBallToTrack startingChooser;
+
+    private float currentCooldown;
+    private float targetYAngle;
 
     private void Update()
     {
         TrackChosenBall();
         CheckIfShouldShoot();
+        SmoothlyRotateIfNeeded();
         CooldownElapsing();
     }
+
 
     private void ShootBall()
     {
@@ -36,10 +44,10 @@ public class Shooter : MonoBehaviour
 
     private void CheckIfShouldShoot()
     {
-        if(currentCoolDown > shootingCooldown)
+        if(currentCooldown > shootingCooldown)
         {
-            currentCoolDown = 0;
-            trackedBall = null;
+            currentCooldown = 0;
+            startingTracker.TrackedBall = null;
 
             ShootBall();
         }
@@ -47,21 +55,31 @@ public class Shooter : MonoBehaviour
 
     private void TrackChosenBall()
     {
-        if(trackedBall == null)
+        if(startingTracker.TrackedBall == null)
         {
-            trackedBall = ballManager.GetRandomBall();
+            startingTracker.TrackedBall = startingChooser.GetBallToTrack();
         }
-        if(trackedBall != null)
+
+        if(startingTracker.TrackedBall != null)
         {
-            lastPosition = trackedBall.transform.position;
-            float distanceToBall = (transform.position - trackedBall.transform.position).magnitude;
-            ballVelocity = (transform.position - lastPosition).normalized;
-            transform.LookAt(trackedBall.transform.position + ballVelocity * distanceToBall / ballStartingSpeed);
+            Vector3 shooterLookAtPos = startingTracker.GetShooterLookAtPosition();
+            Vector3 direction = shooterLookAtPos - transform.position;
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            targetYAngle = targetRotation.eulerAngles.y;
+        }
+    }
+
+    private void SmoothlyRotateIfNeeded()
+    {
+        if(!targetYAngle.Approximately(transform.rotation.eulerAngles.y))
+        {
+            float newYRotation = Mathf.MoveTowards(transform.rotation.eulerAngles.y, targetYAngle, maxRotationSpeed);
+            transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.eulerAngles.x, newYRotation, transform.rotation.eulerAngles.z));
         }
     }
 
     private void CooldownElapsing()
     {
-        currentCoolDown += Time.deltaTime;
+        currentCooldown += Time.deltaTime;
     }
 }

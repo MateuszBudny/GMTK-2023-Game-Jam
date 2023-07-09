@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 84157878949965012}
   - component: {fileID: 2242353564750173890}
   - component: {fileID: 8716806595320570778}
+  - component: {fileID: 878988673926304086}
+  - component: {fileID: 3418343805415976987}
   m_Layer: 0
   m_Name: Shooter
   m_TagString: Untagged
@@ -32,7 +34,7 @@ Transform:
   m_Children:
   - {fileID: 4016613893709781410}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2242353564750173890
 MonoBehaviour:
@@ -51,6 +53,9 @@ MonoBehaviour:
   ballStartingSpeed: 2
   ballTemplate: {fileID: 1958716312581771002, guid: 8fea9f97fd99e404caac709a319869a7,
     type: 3}
+  maxRotationSpeed: 0.5
+  startingTracker: {fileID: 878988673926304086}
+  startingChooser: {fileID: 3418343805415976987}
 --- !u!212 &8716806595320570778
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -103,6 +108,30 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &878988673926304086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8471431903081443179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0619c123f03ffbb4c961905060e05474, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3418343805415976987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8471431903081443179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f079e0b9a637ae4eaf4d71e276a8f90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &371375108332407994
 PrefabInstance:
   m_ObjectHideFlags: 0

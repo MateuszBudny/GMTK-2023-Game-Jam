@@ -38,6 +38,8 @@ public static class ExtensionMethods
         return new Vector3(UnityEngine.Random.Range(minInclusive.x, maxInclusive.x), UnityEngine.Random.Range(minInclusive.y, maxInclusive.y), UnityEngine.Random.Range(minInclusive.z, maxInclusive.z));
     }
 
+    public static bool Approximately(this float floatA, float floatB) => Mathf.Approximately(floatA, floatB);
+
     //public static void SafeDestroy(this GameObject gameObject)
     //{
     //    gameObject.transform.parent = null;
