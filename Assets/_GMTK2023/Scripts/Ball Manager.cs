@@ -371,6 +371,7 @@ public class BallManager : SingleBehaviour<BallManager>
 
         if(end - start + 1 >= minimumInRow)
         {
+            SoundManager.Instance.PlayEnvironmentSound(mergeBallsSound);
             if(start != 0 && end != balls.Count - 1)
             {
                 RetractionPackage rp = new RetractionPackage();
@@ -378,7 +379,6 @@ public class BallManager : SingleBehaviour<BallManager>
                 rp.retractIndex = start;
                 Debug.Log("Adding retraction." + rp.retractIndex);
                 retractions.Add(rp);
-                SoundManager.Instance.PlayEnvironmentSound(mergeBallsSound);
             }
             for(int j = 0; j < end - start + 1; j++)
             {
