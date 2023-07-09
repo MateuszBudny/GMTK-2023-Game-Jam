@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_GMTK2023/Scenes/LVL3.unity
     guid: 6d16c248d08eba746ba3b84a04d13b0d
+  - enabled: 1
+    path: Assets/_GMTK2023/Scenes/GameWin.unity
+    guid: 5ea4d8820a8700b40805b76ee2d24605
   m_configObjects: {}
