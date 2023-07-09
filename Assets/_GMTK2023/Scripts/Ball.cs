@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,4 +34,15 @@ public class Ball : MonoBehaviour
         transform.position = newPos;
         Velocity = dir.normalized * speed;
     }
+
+    public float distanceToBall(Ball ball)
+    {
+        return distanceToPoint(ball.transform.position);
+    }
+
+    public float distanceToPoint(Vector3 pos)
+    {
+        return Vector2.Distance(new Vector2(this.transform.position.x, this.transform.position.z), new Vector2(pos.x, pos.z));
+    }
+
 }

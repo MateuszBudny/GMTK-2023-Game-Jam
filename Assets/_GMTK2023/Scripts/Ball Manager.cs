@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
@@ -23,6 +24,8 @@ public class BallManager : SingleBehaviour<BallManager>
     float slowDown = 5;
     [SerializeField]
     float speedUp = 5;
+    [SerializeField]
+    float startingProgress;
 
     float actualSpeed = 5;
 
@@ -33,12 +36,18 @@ public class BallManager : SingleBehaviour<BallManager>
 
 
     int selection = 0;
+    [SerializeField]
     GameObject head;
+    [SerializeField]
+    GameObject tail;
+
+
     public List<Ball> balls = new List<Ball>();
 
 
     List<CollisionPackage> collisions = new List<CollisionPackage>();
     List<RetractionPackage> retractions = new List<RetractionPackage>();
+
 
     public SplineContainer Spline { get => spline; private set => spline = value; }
 
@@ -46,6 +55,9 @@ public class BallManager : SingleBehaviour<BallManager>
     // Start is called before the first frame update
     void Start()
     {
+        head = Instantiate(head);
+        tail = Instantiate(tail);
+
         selection = 1;
 
         spawnPoint = Spline.EvaluatePosition(0);
@@ -83,13 +95,27 @@ public class BallManager : SingleBehaviour<BallManager>
                 {
                     cp.expectedOffset = ExpectedOffset(cp.collisionSpot);
                     cp.expectedPosition = Spline.EvaluatePosition(cp.expectedOffset);
+                    cp.trackedBall.Velocity = (cp.expectedPosition - cp.trackedBall.transform.position)/ (2 * ballRadius) * speed;
+
                 }
             }
         }
 
+        SetTailAndHead();
 
         //HighlightSelectedBalls();
 
+    }
+
+    private void SetTailAndHead()
+    {
+        head.transform.parent = balls[0].transform;
+        head.transform.localPosition = new Vector3(2 * ballRadius, 0, 0);
+        head.transform.localRotation = Quaternion.identity;
+
+        tail.transform.parent = balls.Last().transform;
+        tail.transform.localPosition = new Vector3(-2*ballRadius, 0, 0);
+        tail.transform.localRotation = Quaternion.identity;
     }
 
     private bool isCollisionInProgress()
@@ -123,20 +149,19 @@ public class BallManager : SingleBehaviour<BallManager>
         float delta = Time.deltaTime * speed / Spline.CalculateLength();
 
 
-        cp.trackedBall.Velocity = (cp.expectedPosition - cp.trackedBall.transform.position) * speed;
-
+ 
         for(int i = balls.Count - 1; i >= cp.collisionSpot; i--)
         {
 
             Vector3 newPosition = Spline.EvaluatePosition(balls[i].Progress - delta);
 
-            if(i == balls.Count - 1 || (newPosition - balls[i + 1].transform.position).magnitude >= 2 * ballRadius)
+            if(i == balls.Count - 1 || balls[i + 1].distanceToPoint(newPosition) >= 2 * ballRadius)
             {
                 balls[i].UpdateParameters(newPosition, newPosition - balls[i].transform.position, speed / Spline.CalculateLength());
                 balls[i].Progress -= delta;
             }
         }
-        if(cp.collisionSpot == 0 || cp.collisionSpot == balls.Count || (balls[cp.collisionSpot].transform.position - balls[cp.collisionSpot - 1].transform.position).magnitude > 4 * ballRadius)
+        if(cp.collisionSpot == 0 || cp.collisionSpot == balls.Count || balls[cp.collisionSpot].distanceToBall( balls[cp.collisionSpot - 1]) > 4 * ballRadius)
         {
 
             balls.Insert(cp.collisionSpot, cp.trackedBall);
@@ -167,7 +192,7 @@ public class BallManager : SingleBehaviour<BallManager>
     {
         for(int i = 0; i < balls.Count; ++i)
         {
-            float distance = (balls[i].transform.position - cp.trackedBall.transform.position).magnitude;
+            float distance = balls[i].distanceToBall( cp.trackedBall);
             if(distance < 2 * ballRadius)
             {
                 Plane p = new Plane(Spline.EvaluateTangent(balls[i].Progress), balls[i].transform.position);
@@ -215,16 +240,17 @@ public class BallManager : SingleBehaviour<BallManager>
 
             if((!reversed && i == 0)
                 || (reversed && i == balls.Count - 1)
-                || (newPosition - balls[i - (reversed ? -1 : 1)].transform.position).magnitude >= 2 * ballRadius)
+                || balls[i - (reversed ? -1 : 1)].distanceToPoint(newPosition) >= 2 * ballRadius)
             {
                 balls[i].UpdateParameters(newPosition, newPosition - balls[i].transform.position, actualSpeed / Spline.CalculateLength());
+                balls[i].transform.right = Spline.EvaluateTangent(balls[i].Progress + delta);
                 balls[i].Progress += delta;
                 balls[i].Progress = Mathf.Clamp(balls[i].Progress, 0, 1);
             }
 
             if(isRetractionInProgress() 
                 && i == start 
-                && (newPosition - balls[i - (reversed ? -1 : 1)].transform.position).magnitude < 2 * ballRadius)
+                && balls[i - (reversed ? -1 : 1)].distanceToPoint(newPosition) < 2 * ballRadius)
             {
                 
                 if(balls[i].Color == balls[i+1].Color)
@@ -238,12 +264,12 @@ public class BallManager : SingleBehaviour<BallManager>
 
 
 
-        if(balls.Count == 0 || ((balls.Last().transform.position - spawnPoint).magnitude > ballRadius && 0 < numOfBalls))
+        if(balls.Count == 0 || (balls.Last().distanceToPoint(spawnPoint) > ballRadius && 0 < numOfBalls))
         {
             Ball go = Instantiate(GetBallTemplateOfRandomColor(), transform);
             go.UpdateParameters(spawnPoint, Spline.EvaluateTangent(0), actualSpeed / Spline.CalculateLength());
             balls.Add(go);
-            balls.Last().Progress = 0;
+            balls.Last().Progress = startingProgress;
             numOfBalls--;
         }
     }
@@ -369,6 +395,7 @@ class CollisionPackage
     public float expectedOffset;
     public Vector3 expectedPosition;
     public int collisionSpot = -1;
+
     public bool blocksInput() { return collisionSpot > -1; }
 }
 
