@@ -62,7 +62,7 @@ public class Shooter : MonoBehaviour
 
         if(startingTracker.TrackedBall != null)
         {
-            Vector3 shooterLookAtPos = startingTracker.GetShooterLookAtPosition();
+            Vector3 shooterLookAtPos = startingTracker.GetShooterLookAtPosition(ballStartingSpeed);
             Vector3 direction = shooterLookAtPos - transform.position;
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             targetYAngle = targetRotation.eulerAngles.y;

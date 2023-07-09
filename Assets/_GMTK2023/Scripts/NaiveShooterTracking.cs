@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NaiveShooterTracking : ShooterTracking
 {
-    public override Vector3 GetShooterLookAtPosition()
+    public override Vector3 GetShooterLookAtPosition(float shootingBallSpeed)
     {
         return TrackedBall.transform.position;
     }

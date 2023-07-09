@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class BetterButSimpleShooterTracking : ShooterTracking
 {
-    public override Vector3 GetShooterLookAtPosition()
+    public override Vector3 GetShooterLookAtPosition(float shootingBallSpeed)
     {
-        float distanceToBall = (transform.position - TrackedBall.transform.position).magnitude;
-        return TrackedBall.transform.position + TrackedBall.Velocity * distanceToBall / TrackedBall.Velocity.magnitude;
+        float distanceThatTheShootingBallWillTravelBeforeGettingYou = (transform.position - TrackedBall.transform.position).magnitude;
+        float timeThatWillTakeShootingBallToGetYou = distanceThatTheShootingBallWillTravelBeforeGettingYou / shootingBallSpeed;
+
+        return TrackedBall.transform.position + TrackedBall.Velocity * BallManager.Instance.Spline.CalculateLength() * timeThatWillTakeShootingBallToGetYou;
     }
 }

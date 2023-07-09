@@ -6,5 +6,5 @@ public abstract class ShooterTracking : MonoBehaviour
 {
     public Ball TrackedBall { get; set; }
 
-    public abstract Vector3 GetShooterLookAtPosition();
+    public abstract Vector3 GetShooterLookAtPosition(float shootingBallSpeed);
 }
