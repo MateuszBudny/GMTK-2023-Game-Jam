@@ -26,7 +26,7 @@ public class UIManager : SingleBehaviour<UIManager>
     public void OnYouWin()
     {
         youWinScreen.SetActive(true);
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
     }
 
     public void YouWinClick()
