@@ -26,6 +26,8 @@ public class BallManager : SingleBehaviour<BallManager>
     [SerializeField]
     float speedUp = 5;
     [SerializeField]
+    float retractionSpeedUp = 5f;
+    [SerializeField]
     float startingProgress=0.2f;
     [SerializeField]
     float finishProgress =0.8f;
@@ -160,7 +162,7 @@ public class BallManager : SingleBehaviour<BallManager>
                 if(cp.collisionSpot >= 0)
                     InsertBall(cp);
             }
-
+            
         }
         else
         {
@@ -246,6 +248,10 @@ public class BallManager : SingleBehaviour<BallManager>
             {
                 rp.retractIndex++;
             }
+            if(collisionSpot == rp.retractIndex + 1)
+            {
+                rp.retractIndex++;
+            }
         }
     }
 
@@ -305,7 +311,7 @@ public class BallManager : SingleBehaviour<BallManager>
             }
 
         }
-        delta = isRetractionInProgress() ? -delta : delta;
+        delta = isRetractionInProgress() ? -delta * retractionSpeedUp : delta;
         
 
         for(int i = start; i != end; i += reversed ? -1 : 1)
