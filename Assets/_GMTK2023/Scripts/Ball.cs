@@ -14,6 +14,7 @@ public class Ball : MonoBehaviour
     private BallState state = BallState.InSnake;
     private MeshRenderer meshRenderer;
     private float progress;
+
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>(); 

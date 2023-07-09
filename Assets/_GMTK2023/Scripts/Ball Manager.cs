@@ -11,8 +11,7 @@ public class BallManager : SingleBehaviour<BallManager>
 
     [SerializeField]
     SplineContainer spline;
-    [SerializeField]
-    List<Color> colors = new List<Color>();
+    public List<Ball> ballsTemplatesColors = new List<Ball>();
 
     [SerializeField]
     int numOfBalls = 10;
@@ -26,9 +25,6 @@ public class BallManager : SingleBehaviour<BallManager>
     float speedUp = 5;
 
     float actualSpeed = 5;
-
-    [SerializeField]
-    Ball ballTemplate;
 
     [SerializeField]
     int minimumInRow = 3;
@@ -244,9 +240,8 @@ public class BallManager : SingleBehaviour<BallManager>
 
         if(balls.Count == 0 || ((balls.Last().transform.position - spawnPoint).magnitude > ballRadius && 0 < numOfBalls))
         {
-            Ball go = Instantiate(ballTemplate, this.transform);
+            Ball go = Instantiate(GetBallTemplateOfRandomColor(), transform);
             go.UpdateParameters(spawnPoint, Spline.EvaluateTangent(0), actualSpeed / Spline.CalculateLength());
-            go.Color = colors[Random.Range(0, colors.Count)];
             balls.Add(go);
             balls.Last().Progress = 0;
             numOfBalls--;
@@ -345,9 +340,9 @@ public class BallManager : SingleBehaviour<BallManager>
         return balls.Count == 0 ? null : balls[Random.Range(0, balls.Count)];
     }
 
-    public Color GetRandomColor()
+    public Ball GetBallTemplateOfRandomColor()
     {
-        return colors[Random.Range(0, colors.Count)];
+        return ballsTemplatesColors.GetRandomElement();
     }
 
     public void TrackBall(Ball ball)

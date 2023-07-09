@@ -1,5 +1,6 @@
 using NaughtyAttributes;
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class Shooter : MonoBehaviour
@@ -9,11 +10,15 @@ public class Shooter : MonoBehaviour
     [SerializeField]
     private float shootingCooldown = 5f;
     [SerializeField]
+    private float shootingBallSpawnDelayAfterShoot = 1f;
+    [SerializeField]
     private float ballStartingSpeed = 2f;
     [SerializeField]
     private Ball ballTemplate;
     [SerializeField]
     private float maxRotationSpeed = 1f;
+    [SerializeField]
+    private Transform ballSpawnPoint;
 
     [BoxGroup("Starting Modules")]
     [SerializeField]
@@ -22,8 +27,14 @@ public class Shooter : MonoBehaviour
     [SerializeField]
     private ShooterChoosingBallToTrack startingChooser;
 
+    private Ball ballSpawnedWaitingForShoot;
     private float currentCooldown;
     private float targetYAngle;
+
+    private void Start()
+    {
+        StartCoroutine(LoadNewBallAfterDelay());
+    }
 
     private void Update()
     {
@@ -33,13 +44,14 @@ public class Shooter : MonoBehaviour
         CooldownElapsing();
     }
 
-
     private void ShootBall()
     {
-        Ball shootingBall = Instantiate(ballTemplate, transform.position, Quaternion.identity, ballManager.transform);
-        shootingBall.State = BallState.Flying;
-        shootingBall.Velocity = transform.forward * ballStartingSpeed;
-        ballManager.TrackBall(shootingBall);
+        ballSpawnedWaitingForShoot.State = BallState.Flying;
+        ballSpawnedWaitingForShoot.Velocity = transform.forward * ballStartingSpeed;
+        ballManager.TrackBall(ballSpawnedWaitingForShoot);
+        ballSpawnedWaitingForShoot = null;
+
+        StartCoroutine(LoadNewBallAfterDelay());
     }
 
     private void CheckIfShouldShoot()
@@ -81,5 +93,17 @@ public class Shooter : MonoBehaviour
     private void CooldownElapsing()
     {
         currentCooldown += Time.deltaTime;
+    }
+
+    private IEnumerator LoadNewBallAfterDelay()
+    {
+        yield return new WaitForSeconds(shootingBallSpawnDelayAfterShoot);
+        SpawnBallToShoot();
+    }
+
+    private void SpawnBallToShoot()
+    {
+        ballSpawnedWaitingForShoot = Instantiate(BallManager.Instance.GetBallTemplateOfRandomColor(), ballSpawnPoint.position, Quaternion.identity, ballManager.transform);
+        ballSpawnedWaitingForShoot.State = BallState.SpawnedWaitingForShoot;
     }
 }

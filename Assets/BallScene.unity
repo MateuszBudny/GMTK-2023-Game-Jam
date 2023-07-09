@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -417,35 +417,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
         type: 3}
-      propertyPath: speed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
-        type: 3}
       propertyPath: spline
       value: 
       objectReference: {fileID: 1887977371}
-    - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
-        type: 3}
-      propertyPath: slowDown
-      value: -2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
-        type: 3}
-      propertyPath: numOfBalls
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
-        type: 3}
-      propertyPath: ballTemplate
-      value: 
-      objectReference: {fileID: 1958716312581771002, guid: 8fea9f97fd99e404caac709a319869a7,
-        type: 3}
-    - target: {fileID: 5362235214100461462, guid: 57bccfcbee07537488fac603bd1c2661,
-        type: 3}
-      propertyPath: minimumInRow
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 7642440360602836015, guid: 57bccfcbee07537488fac603bd1c2661,
         type: 3}
       propertyPath: m_RootOrder

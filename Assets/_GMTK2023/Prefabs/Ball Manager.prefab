@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5362235214100461462
 MonoBehaviour:
@@ -45,15 +45,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spline: {fileID: 0}
-  colors:
-  - {r: 1, g: 0.496, b: 0.496, a: 0}
-  - {r: 1, g: 1, b: 0.496, a: 0}
-  - {r: 0.504, g: 0.504, b: 1, a: 0}
-  numOfBalls: 20
+  ballsTemplatesColors:
+  - {fileID: -205656006534331225, guid: 42e93f6e2cf656641a92ae39eb33caf5, type: 3}
+  - {fileID: -3364783350254254890, guid: ee20f0a38efc8dd468d9635d4e272318, type: 3}
+  - {fileID: -1095419791338981693, guid: 668b1fa153778d74ea333a0e46924193, type: 3}
+  - {fileID: -6092317717638562839, guid: 6361dc7feab1a0544bb4faad168cc541, type: 3}
+  numOfBalls: 4
   ballRadius: 0.5
-  speed: 5
+  speed: 2
   slowDown: -2
   speedUp: 5
-  ballTemplate: {fileID: 4683756622583942575, guid: 8fea9f97fd99e404caac709a319869a7,
-    type: 3}
+  minimumInRow: 2
   balls: []
