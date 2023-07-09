@@ -139,6 +139,7 @@ public class BallManager : SingleBehaviour<BallManager>
         if(balls[0].Progress > finishProgress)
         {
             finished = true;
+            UIManager.Instance.OnYouWin();
             for(int i = collisions.Count - 1; i >= 0; i--)
             {
                 if(collisions[i].collisionSpot < 0)
@@ -445,6 +446,7 @@ public class BallManager : SingleBehaviour<BallManager>
             if(balls.Count == 0)
             {
                 lost = true;
+                UIManager.Instance.OnYouLose();
             }
         }
     }
