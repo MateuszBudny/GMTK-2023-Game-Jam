@@ -109,7 +109,6 @@ public class BallManager : SingleBehaviour<BallManager>
 
         CheckIfFinished();
 
-
         SetTailAndHead();
 
         //HighlightSelectedBalls();
@@ -129,7 +128,7 @@ public class BallManager : SingleBehaviour<BallManager>
                 {
                     cp.expectedOffset = ExpectedOffset(cp.collisionSpot);
                     cp.expectedPosition = Spline.EvaluatePosition(cp.expectedOffset);
-                    cp.trackedBall.Velocity = (cp.expectedPosition - cp.trackedBall.transform.position)/ (2 * ballRadius) * speed;
+                    cp.trackedBall.Velocity = (cp.expectedPosition - cp.trackedBall.transform.position)/ (2 * ballRadius) * speed * retractionSpeedUp;
                     SoundManager.Instance.PlayEnvironmentSound(newBallJoinedSnakeSound);
                 }
             }
@@ -138,6 +137,8 @@ public class BallManager : SingleBehaviour<BallManager>
 
     private void CheckIfFinished()
     {
+        if(balls.Count == 0)
+            return;
         if(balls[0].Progress > finishProgress)
         {
             finished = true;
@@ -173,15 +174,38 @@ public class BallManager : SingleBehaviour<BallManager>
         }
     }
 
+    private void AddBallToList(Ball ball, int index)
+    {
+        balls.Insert(index, ball);
+        UpdateRetractions(index);
+        UpdateCollisions(index);
+    }
+
+    private void UpdateCollisions(int index)
+    {
+        foreach(CollisionPackage cp in collisions)
+        {
+            if(cp.collisionSpot > index)
+            {
+                cp.expectedOffset = ExpectedOffset(cp.collisionSpot + 1);
+                cp.expectedPosition = Spline.EvaluatePosition(cp.expectedOffset);
+                cp.trackedBall.Velocity = (cp.expectedPosition - cp.trackedBall.transform.position) / (2 * ballRadius) * speed * retractionSpeedUp;
+            }
+        }
+    }
+
     private void SetTailAndHead()
     {
-        head.transform.parent = balls[0].transform;
-        head.transform.localPosition = new Vector3(0, 0, 2 * ballRadius);
-        head.transform.localRotation = Quaternion.identity;
+        if(balls.Count > 0)
+        {
+            head.transform.parent = balls[0].transform;
+            head.transform.localPosition = new Vector3(0, 0, 2 * ballRadius);
+            head.transform.localRotation = Quaternion.identity;
 
-        tail.transform.parent = balls.Last().transform;
-        tail.transform.localPosition = new Vector3(0, 0, -2 * ballRadius);
-        tail.transform.localRotation = Quaternion.identity;
+            tail.transform.parent = balls.Last().transform;
+            tail.transform.localPosition = new Vector3(0, 0, -2 * ballRadius);
+            tail.transform.localRotation = Quaternion.identity;
+        }
     }
 
     private bool isCollisionInProgress()
@@ -209,10 +233,10 @@ public class BallManager : SingleBehaviour<BallManager>
         return isCollisionInProgress() || isRetractionInProgress() || finished || lost;
     }
 
-    private void InsertBall(CollisionPackage cp)
+    private void InsertBall(CollisionPackage cp)    
     {
 
-        float delta = Time.deltaTime * speed / Spline.CalculateLength();
+        float delta = Time.deltaTime * speed / Spline.CalculateLength() * retractionSpeedUp;
 
 
  
@@ -229,11 +253,8 @@ public class BallManager : SingleBehaviour<BallManager>
         }
         if(cp.collisionSpot == 0 || cp.collisionSpot == balls.Count || balls[cp.collisionSpot].distanceToBall( balls[cp.collisionSpot - 1]) > 4 * ballRadius)
         {
-
-            balls.Insert(cp.collisionSpot, cp.trackedBall);
+            AddBallToList(cp.trackedBall, cp.collisionSpot);
             balls[cp.collisionSpot].Progress = cp.expectedOffset;
-
-            UpdateRetractions(cp.collisionSpot);
 
             ClearRepeating(cp.collisionSpot);
 
@@ -243,23 +264,45 @@ public class BallManager : SingleBehaviour<BallManager>
         }
     }
 
-    private void UpdateRetractions(int collisionSpot)
+    private void UpdateRetractions(int collisionSpot, bool retractionOccured = false)
     {
         foreach(RetractionPackage rp in retractions)
         {
-            if(rp.retractIndex >= collisionSpot)
+            if(retractionOccured)
             {
-                rp.retractIndex++;
+                if(rp.retractIndex >= collisionSpot)
+                {
+                    rp.retractIndex++;
+                }
+                if(collisionSpot == rp.retractIndex + 1)
+                {
+                    rp.retractIndex++;
+                }
             }
-            if(collisionSpot == rp.retractIndex + 1)
+            else
             {
-                rp.retractIndex++;
+                if(rp.retractIndex >= collisionSpot)
+                {
+                    rp.retractIndex -= 2;
+                }
             }
         }
     }
 
     private float ExpectedOffset(int index)
     {
+        if(balls.Count == 1)
+        {
+            if(index == 1)
+            {
+                return balls[0].Progress - 2 * ballRadius / spline.CalculateLength();
+                
+            }
+            if(index == 0)
+            {
+                return balls[0].Progress + 2 * ballRadius / spline.CalculateLength();
+            }
+        }
         if(index == 0)
         {
             return balls[0].Progress + (balls[0].Progress - balls[1].Progress);
@@ -342,6 +385,8 @@ public class BallManager : SingleBehaviour<BallManager>
 
                 Debug.Log("Removing retraction" + currentResolving.retractIndex);
                 retractions.Remove(currentResolving);
+                UpdateRetractions(i + 1,true);
+                break;
             }
         }
 
